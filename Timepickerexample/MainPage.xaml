@@ -9,17 +9,30 @@
                FontSize="24"
                HorizontalOptions="Center" />
 
-        --><!-- The embedded TimePicker --><!--
+        -->
+    <!-- The embedded TimePicker -->
+    <!--
         <local:CustomTimePicker x:Name="EmbeddedTimePicker" SelectedTime="{Binding SelectedTime}" />
     </VerticalStackLayout>-->
     <VerticalStackLayout Padding="20">
         <Label Text="TimePicker with Spinner Style (Android)"
                FontSize="24"
                HorizontalOptions="Center" />
-        <TimePicker x:Name="timePicker" /> 
+        <TimePicker x:Name="timePicker" />
+
         <Label Text="Inline TimePicker"
                FontSize="24"
                HorizontalOptions="Center" />
         <local:InlineTimePicker />
+
+
+        <Label Text="Inline TimePicker"
+               FontSize="24"
+               HorizontalOptions="Center" />
+
+        <local:InlineTimePicker x:Name="InlineTimePicker" />
+
+        <Button Text="Get Time"
+                Clicked="OnGetTimeClicked" />
     </VerticalStackLayout>
 </ContentPage>

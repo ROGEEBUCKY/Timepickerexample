@@ -14,5 +14,10 @@ namespace Timepickerexample
                 Console.WriteLine($"Selected Time: {e}");
             };
             }
+        private void OnGetTimeClicked(object sender, EventArgs e)
+            {
+            var selectedTime = InlineTimePicker.Time; // Get the selected time
+            DisplayAlert("Selected Time", $"You selected: {selectedTime:hh\\:mm}", "OK");
+            }
         }
 }
