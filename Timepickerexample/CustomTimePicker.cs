@@ -1,16 +1,19 @@
 ﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
 
 namespace Timepickerexample
     {
-    public class CustomTimePicker : View
+    public class InlineTimePicker : VerticalStackLayout
         {
-        public static readonly BindableProperty SelectedTimeProperty =
-            BindableProperty.Create(nameof(SelectedTime), typeof(TimeSpan), typeof(CustomTimePicker), default(TimeSpan), BindingMode.TwoWay);
+        public TimeSpan Time { get; set; } = new TimeSpan(0, 0, 0);
 
-        public TimeSpan SelectedTime
+        public event EventHandler<TimeSpan> TimeChanged;
+
+        public void OnTimeChanged(TimeSpan time)
             {
-            get => (TimeSpan)GetValue(SelectedTimeProperty);
-            set => SetValue(SelectedTimeProperty, value);
+            Time = time;
+            TimeChanged?.Invoke(this, Time);
             }
         }
     }

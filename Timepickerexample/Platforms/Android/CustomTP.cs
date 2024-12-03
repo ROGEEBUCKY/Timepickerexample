@@ -1,49 +1,90 @@
-﻿
+﻿using Android.Content;
+using Android.Widget;
 using Microsoft.Maui.Handlers;
 
 namespace Timepickerexample
     {
-    public class CustomEmbeddedTimePickerHandler : ViewHandler<CustomTimePicker, Android.Widget.TimePicker>
+    public class InlineTimePickerHandler : ViewHandler<InlineTimePicker, LinearLayout>
         {
-        public CustomEmbeddedTimePickerHandler(IPropertyMapper mapper, CommandMapper? commandMapper = null)
-            : base(mapper, commandMapper)
+        private bool _isUpdating;
+        public static IPropertyMapper<InlineTimePicker, InlineTimePickerHandler> PropertyMapper = new PropertyMapper<InlineTimePicker, InlineTimePickerHandler>(ViewHandler.ViewMapper)
             {
-            }
 
-        protected override Android.Widget.TimePicker CreatePlatformView()
-            {
-            var timePicker = new Android.Widget.TimePicker(Context);
-
-            // Set the TimePicker to 24-hour format and spinner mode
-            timePicker.SetIs24HourView(Java.Lang.Boolean.True);
-
-            // Set initial time
-            var time = VirtualView.SelectedTime;
-            timePicker.Hour = time.Hours;
-            timePicker.Minute = time.Minutes;
-
-            // Update the binding whenever the time changes
-            timePicker.TimeChanged += (s, e) =>
-            {
-                if (VirtualView != null)
-                    {
-                    var newTime = new TimeSpan(timePicker.Hour, timePicker.Minute, 0);
-                    VirtualView.SelectedTime = newTime;
-                    }
             };
 
-            return timePicker;
+        public InlineTimePickerHandler() : base(PropertyMapper)
+            {
+            }
+        protected override LinearLayout CreatePlatformView()
+            {
+            var context = MauiContext?.Context ?? throw new InvalidOperationException("Context is null");
+
+            var layout = new LinearLayout(context)
+                {
+                Orientation = Orientation.Horizontal
+                };
+
+            // Create hour picker
+            var hourPicker = new NumberPicker(context)
+                {
+                MinValue = 0,
+                MaxValue = 23
+                };
+            hourPicker.ValueChanged += (s, e) =>
+            {
+                if (_isUpdating) return;
+
+                _isUpdating = true;
+                var newTime = new TimeSpan(hourPicker.Value, VirtualView.Time.Minutes, 0);
+                VirtualView.OnTimeChanged(newTime);
+                _isUpdating = false;
+            };
+
+            // Create minute picker
+            var minutePicker = new NumberPicker(context)
+                {
+                MinValue = 0,
+                MaxValue = 59
+                };
+            minutePicker.ValueChanged += (s, e) =>
+            {
+                if (_isUpdating) return;
+
+                _isUpdating = true;
+                var newTime = new TimeSpan(VirtualView.Time.Hours, minutePicker.Value, 0);
+                VirtualView.OnTimeChanged(newTime);
+                _isUpdating = false;
+            };
+
+            layout.AddView(hourPicker);
+            layout.AddView(minutePicker);
+
+            return layout;
             }
 
-        protected override void ConnectHandler(Android.Widget.TimePicker platformView)
+        protected override void ConnectHandler(LinearLayout platformView)
             {
             base.ConnectHandler(platformView);
+
+            if (VirtualView != null)
+                {
+                UpdateTime();
+                }
             }
 
-        protected override void DisconnectHandler(Android.Widget.TimePicker platformView)
+        private void UpdateTime()
             {
-            platformView.TimeChanged -= (s, e) => { }; // Cleanup event handlers
-            base.DisconnectHandler(platformView);
+            if (PlatformView == null) return;
+
+            _isUpdating = true;
+
+            var hourPicker = (NumberPicker)PlatformView.GetChildAt(0);
+            var minutePicker = (NumberPicker)PlatformView.GetChildAt(1);
+
+            hourPicker.Value = VirtualView.Time.Hours;
+            minutePicker.Value = VirtualView.Time.Minutes;
+
+            _isUpdating = false;
             }
         }
     }

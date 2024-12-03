@@ -17,11 +17,10 @@ namespace Timepickerexample
                  .ConfigureMauiHandlers(handlers =>
                  {
                      handlers.AddHandler<TimePicker, CustomTimePickerHandler>();
+                 }).ConfigureMauiHandlers(handlers =>
+                 {
+                     handlers.AddHandler<InlineTimePicker, InlineTimePickerHandler>();
                  });
-                 //.ConfigureMauiHandlers(handlers =>
-                 //{
-                 //    handlers.AddHandler<CustomTimePicker, CustomEmbeddedTimePickerHandler>();
-                 //});
 
 #if DEBUG
             builder.Logging.AddDebug();

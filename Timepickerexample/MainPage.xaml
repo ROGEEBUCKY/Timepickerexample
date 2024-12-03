@@ -16,6 +16,10 @@
         <Label Text="TimePicker with Spinner Style (Android)"
                FontSize="24"
                HorizontalOptions="Center" />
-        <TimePicker x:Name="timePicker" />
+        <TimePicker x:Name="timePicker" /> 
+        <Label Text="Inline TimePicker"
+               FontSize="24"
+               HorizontalOptions="Center" />
+        <local:InlineTimePicker />
     </VerticalStackLayout>
 </ContentPage>
